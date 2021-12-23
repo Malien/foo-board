@@ -3,47 +3,33 @@ import { Map } from "immutable";
 import { Board, Card } from "../board";
 import Boards from "./Boards";
 import Header from "./Header";
+import { Reordering, reorderInMemory } from "../reorder";
 
-const initialCards: Map<number, Card> = Map([
-  [
-    1,
-    {
-      id: 1,
-      order: 0,
-      title: "Welcome",
-      description: "Welcome to the FooBoard web application",
-      boardId: 1,
-    },
-  ],
-  [
-    2,
-    {
-      id: 2,
-      order: 1,
-      title: "Add new card",
-      description:
-        'To add new card just press "Add new item" button at the' +
-        "top-right corner of the page",
-      boardId: 1,
-    },
-  ],
-]);
+interface Props {
+  initialCards: Card[];
+  boards: Board[];
+  persistReorder?: (reordering: Reordering) => void
+}
 
-const initialBoards: Board[] = [
-  { id: 1, name: "To Do" },
-  { id: 2, name: "In progress" },
-  { id: 3, name: "Done" },
-];
+function App({ initialCards, boards, persistReorder }: Props) {
+  const [cards, setCards] = useState(() =>
+    Map(initialCards.map<[number, Card]>((_) => [_.id, _]))
+  );
 
-function App() {
-  const [boards, setBoards] = useState(initialBoards);
-  const [cards, setCards] = useState(initialCards);
+  const handleReordering = (reordering: Reordering) => {
+    setCards((cards) => reorderInMemory(cards, reordering));
+    persistReorder?.(reordering)
+  };
 
   return (
-    <div className="text-emerald-800">
+    <div className="text-emerald-800 min-h-screen">
       <Header />
-      <main className="max-w-screen-xl m-auto">
-        <Boards boards={boards} cards={cards} onChange={setCards} />
+      <main className="max-w-screen-xl m-auto overflow-x-auto">
+        <Boards
+          boards={boards}
+          cards={cards}
+          onReorder={handleReordering}
+        />
       </main>
     </div>
   );

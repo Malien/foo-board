@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@types/react-beautiful-dnd": "^13.1.2",
+    "idb": "^7.0.0",
     "immutable": "^4.0.0",
     "react": "^18.0.0-rc.0",
     "react-beautiful-dnd": "^13.1.0",

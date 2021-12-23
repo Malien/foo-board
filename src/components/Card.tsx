@@ -11,7 +11,7 @@ export default function Card({ card }: Props) {
       {(provided) => (
         <div
           className="bg-emerald-400 rounded-md overflow-hidden shadow-sm 
-            cursor-pointer mb-2"
+            cursor-pointer mb-2 select-none"
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}

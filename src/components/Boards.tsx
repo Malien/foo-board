@@ -3,6 +3,13 @@ import { Map } from "immutable";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { Board as BoardType, Card, cmpOrder } from "../board";
 import Board from "./Board";
+import { Reordering, toReordering } from "../reorder";
+
+interface Props {
+  boards: BoardType[];
+  cards: Map<number, Card>;
+  onReorder?: (reordering: Reordering) => void;
+}
 
 function sorted<T>(iter: Iterable<T>, cmpFn?: (a: T, b: T) => number) {
   const arr = [...iter];
@@ -10,58 +17,10 @@ function sorted<T>(iter: Iterable<T>, cmpFn?: (a: T, b: T) => number) {
   return arr;
 }
 
-function reorder(
-  cards: Map<number, Card>,
-  { destination, draggableId, source }: DropResult
-) {
-  if (!destination) return cards;
-  if (
-    destination.droppableId === source.droppableId &&
-    destination.index === source.index
-  )
-    return cards;
-
-  const destinationDroppableId = Number.parseInt(destination.droppableId);
-  const sourceDroppableId = Number.parseInt(source.droppableId);
-
-  return cards
-    .map((card) => {
-      let dx = 0;
-      if (card.boardId === sourceDroppableId && card.order > source.index) {
-        return { ...card, order: card.order - 1 };
-      }
-      if (
-        card.boardId === destinationDroppableId &&
-        card.order >= destination.index
-      ) {
-        return { ...card, order: card.order + 1 };
-      }
-      return card;
-    })
-    .update(Number.parseInt(draggableId), (card) => {
-      // Ooooh scarry. as any. But returning the same value the function was
-      // called with will not change the map. The value function is called with if
-      // there is no such key present is undefined, so returning value is the same
-      // - undefined
-      if (!card) return undefined as any;
-      return {
-        ...card,
-        boardId: destinationDroppableId,
-        order: destination.index,
-      };
-    });
-}
-
-interface Props {
-  boards: BoardType[];
-  cards: Map<number, Card>;
-  onChange?: (cards: Map<number, Card>) => void;
-}
-
-export default function Boards({ boards, cards, onChange }: Props) {
+export default function Boards({ boards, cards, onReorder }: Props) {
   const handleDragEnd = (result: DropResult) => {
-    if (!onChange) return;
-    onChange(reorder(cards, result));
+    const reordering = toReordering(result);
+    reordering && onReorder?.(reordering);
   };
 
   const cardDistribution = useMemo(
