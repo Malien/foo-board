@@ -8,7 +8,7 @@ interface Props {
 export default function Card({ card }: Props) {
   return (
     <Draggable draggableId={String(card.id)} index={card.order}>
-      {(provided) => (
+      {provided => (
         <div
           className="bg-emerald-400 rounded-md overflow-hidden shadow-sm 
             cursor-pointer mb-2 select-none"

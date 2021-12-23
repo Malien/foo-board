@@ -26,8 +26,8 @@ export default function Boards({ boards, cards, onReorder }: Props) {
   const cardDistribution = useMemo(
     () =>
       cards
-        .groupBy((_) => _.boardId)
-        .map((collection) => sorted(collection.values(), cmpOrder))
+        .groupBy(_ => _.boardId)
+        .map(collection => sorted(collection.values(), cmpOrder))
         .toMap(),
     [cards]
   );
@@ -38,7 +38,7 @@ export default function Boards({ boards, cards, onReorder }: Props) {
         className="p-4 grid grid-flow-col [grid-auto-columns:minmax(300px,1fr)] 
         gap-4 min-h-[360px] m-auto w-fit"
       >
-        {boards.map((board) => (
+        {boards.map(board => (
           <Board
             key={String(board.id)}
             board={board}

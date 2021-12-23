@@ -4,14 +4,13 @@ import { Card } from "./board";
 
 export interface Reordering {
   cardId: number;
-  source: {
-    boardId: number;
-    order: number;
-  };
-  destination: {
-    boardId: number;
-    order: number;
-  };
+  source: ReorderingTarget;
+  destination: ReorderingTarget;
+}
+
+export interface ReorderingTarget {
+  boardId: number;
+  order: number;
 }
 
 export function toReordering({
@@ -51,25 +50,26 @@ export function reorderInMemory(
     return cards;
 
   return cards
-    .map((card) => {
-      let dx = 0
+    .map(card => {
+      let dx = 0;
       if (card.boardId === source.boardId && card.order > source.order) {
-        dx -= 1
+        dx -= 1;
       }
       if (
         card.boardId === destination.boardId &&
         card.order + dx >= destination.order
       ) {
-        dx += 1
+        dx += 1;
       }
-      if (dx === 0) return card
+      // Referential equality optimization
+      if (dx === 0) return card;
       return { ...card, order: card.order + dx };
     })
-    .update(cardId, (card) => {
-      // Ooooh scarry. as any. But returning the same value the function was
-      // called with will not change the map. The value function is called with if
-      // there is no such key present is undefined, so returning value is the same
-      // - undefined
+    .update(cardId, card => {
+      // OoOoooOh scarry. "as any". But returning the same value the function was
+      // called with will not change the map. If there is no such key present
+      // function is called with undefined, so returning undefined should not
+      // cause map to be updated
       if (!card) return undefined as any;
       return {
         ...card,

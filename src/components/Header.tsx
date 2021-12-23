@@ -1,4 +1,3 @@
-
 interface Props {
   onNewItem?: () => void;
 }
@@ -26,6 +25,6 @@ export default function Header({ onNewItem }: Props) {
           Add new item
         </button>
       </div>
-  </header>
+    </header>
   );
 }

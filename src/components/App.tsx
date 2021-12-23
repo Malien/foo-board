@@ -8,28 +8,24 @@ import { Reordering, reorderInMemory } from "../reorder";
 interface Props {
   initialCards: Card[];
   boards: Board[];
-  persistReorder?: (reordering: Reordering) => void
+  persistReorder?: (reordering: Reordering) => void;
 }
 
 function App({ initialCards, boards, persistReorder }: Props) {
   const [cards, setCards] = useState(() =>
-    Map(initialCards.map<[number, Card]>((_) => [_.id, _]))
+    Map(initialCards.map<[number, Card]>(card => [card.id, card]))
   );
 
   const handleReordering = (reordering: Reordering) => {
-    setCards((cards) => reorderInMemory(cards, reordering));
-    persistReorder?.(reordering)
+    setCards(cards => reorderInMemory(cards, reordering));
+    persistReorder?.(reordering);
   };
 
   return (
     <div className="text-emerald-800 min-h-screen">
       <Header />
       <main className="max-w-screen-xl m-auto overflow-x-auto">
-        <Boards
-          boards={boards}
-          cards={cards}
-          onReorder={handleReordering}
-        />
+        <Boards boards={boards} cards={cards} onReorder={handleReordering} />
       </main>
     </div>
   );

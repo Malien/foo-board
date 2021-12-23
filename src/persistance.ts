@@ -1,7 +1,7 @@
 import { DBSchema, openDB } from "idb/with-async-ittr";
 import { Board, Card } from "./board";
 import { initialBoards, initialCards } from "./initialData";
-import { Reordering } from "./reorder";
+import { Reordering, ReorderingTarget } from "./reorder";
 
 interface Schema extends DBSchema {
   boards: {
@@ -55,41 +55,40 @@ export async function retrieveData() {
   return { boards, cards };
 }
 
+const rangeOfCardsLeftBehind = (source: ReorderingTarget) =>
+  IDBKeyRange.bound(
+    [0, source.boardId, source.order],
+    [0, source.boardId + 1, 0],
+    true,
+    true
+  );
+
+const rangeOfCardsToBeBumpedDown = (destination: ReorderingTarget) =>
+  IDBKeyRange.bound(
+    [0, destination.boardId, destination.order],
+    [0, destination.boardId + 1, 0],
+    false,
+    true
+  );
+
+const rangeOfMarkedCards = IDBKeyRange.lowerBound([1, 0, 0], false);
+
 export async function reorder({ cardId, destination, source }: Reordering) {
   const db = await dbPromise;
   const tx = db.transaction("cards", "readwrite");
+  const index = tx.objectStore("cards").index("toBePatched-boardId-order");
 
-  const leftBehind = tx
-    .objectStore("cards")
-    .index("toBePatched-boardId-order")
-    .iterate(
-      IDBKeyRange.bound(
-        [0, source.boardId, source.order],
-        [0, source.boardId + 1, 0],
-        true,
-        true
-      )
-    );
-
-  for await (const cursor of leftBehind) {
+  // Shift the cards left behind 1 space higher
+  for await (const cursor of index.iterate(rangeOfCardsLeftBehind(source))) {
     const { value } = cursor;
     value.order -= 1;
     cursor.update(value);
   }
 
-  const toBeSmudged = tx
-    .objectStore("cards")
-    .index("toBePatched-boardId-order")
-    .iterate(
-      IDBKeyRange.bound(
-        [0, destination.boardId, destination.order],
-        [0, destination.boardId + 1, 0],
-        false,
-        true
-      )
-    );
-
-  for await (const cursor of toBeSmudged) {
+  // Mark cards to be shifted lower where the current card would reside
+  for await (const cursor of index.iterate(
+    rangeOfCardsToBeBumpedDown(destination)
+  )) {
     const { value } = cursor;
     // Iterating over index while updating it causes cursor to be stuck in an
     // infinite loop. So to avoid it, I'm marking values to be updated so they
@@ -98,24 +97,20 @@ export async function reorder({ cardId, destination, source }: Reordering) {
     cursor.update(value);
   }
 
-  const toBePatched = tx
-    .objectStore("cards")
-    .index("toBePatched-boardId-order")
-    .iterate(IDBKeyRange.lowerBound([1, 0, 0], false));
-
-  for await (const cursor of toBePatched) {
+  // Apply the shift down to marked cards
+  for await (const cursor of index.iterate(rangeOfMarkedCards)) {
     const { value } = cursor;
     value.toBePatched = 0;
     value.order += 1;
     cursor.update(value);
   }
 
-  const cardCursor = await tx.objectStore("cards").openCursor(cardId);
-  if (!cardCursor) throw new Error("Invalid card id passed");
-  const card = cardCursor.value;
-  card.boardId = destination.boardId;
-  card.order = destination.order;
-  cardCursor.update(card);
+  // Update the card that is being reordered
+  {
+    const cursor = await tx.objectStore("cards").openCursor(cardId);
+    if (!cursor) throw new Error("Invalid card id passed");
+    cursor.update(Object.assign(cursor.value, destination));
+  }
 
   await tx.done;
 }
