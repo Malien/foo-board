@@ -7,9 +7,9 @@ const itemClassName =
   "px-4 py-3 grid items-center [grid-template-columns:auto_1fr] gap-2 text-md " +
   "relative before:absolute before:inset-0 before:bg-emerald-600 " +
   "before:opacity-0 before:transition-opacity before:duration-200 " +
-  "cursor-pointer hover:before:opacity-20 outline-none " +
+  "cursor-pointer hover:before:opacity-15 outline-none " +
   "first-of-type:before:rounded-t-xl last-of-type:before:rounded-b-xl " +
-  "focus:before:opacity-40 active:before:opacity-50";
+  "focus:before:opacity-40 active:before:opacity-50 font-bold text-emerald-800";
 
 interface Props {
   rightBoard?: Board;
@@ -17,6 +17,8 @@ interface Props {
   onDelete?: () => void;
   onMove?: (toBoard: number) => void;
 }
+
+let i = 0
 
 export default function CardDropdown({
   leftBoard,
@@ -53,7 +55,13 @@ export default function CardDropdown({
             Move to "{rightBoard.name}"
           </Dropdown.Item>
         )}
-        <Dropdown.Item onClick={onDelete} className={classNames(itemClassName)}>
+        <Dropdown.Item
+          onClick={onDelete}
+          className={classNames(
+            itemClassName,
+            "text-rose-600 before:bg-rose-600"
+          )}
+        >
           <Icon kind="delete" />
           Delete
         </Dropdown.Item>

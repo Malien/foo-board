@@ -15,39 +15,38 @@ export const initialCards: Map<number, Card> = Map(
       order: 1,
       title: "Add new card",
       description:
-        'To add new card just press "Add new item" button at the' +
-        "top-right corner of the page",
+        'To add new card just press "Add new item" button at the top-right ' +
+        "corner of the page",
       boardId: 1,
     },
     {
       id: 3,
-      order: 0,
-      title: "Dummy 1",
-      description: "Surely a dummy",
-      boardId: 2,
+      order: 2,
+      title: "You don't even need to add descriptions!",
+      description: "",
+      boardId: 1,
     },
     {
       id: 4,
-      order: 1,
-      title: "Dummy 2",
-      description: "Surely a dummy",
-      boardId: 2,
+      order: 3,
+      title: "Drag me!",
+      description:
+        "If you feel like you're ready to move to the next stage, just drag " +
+        "this card to the other column. I'm even mobile friendly",
+      boardId: 1,
     },
     {
       id: 5,
-      order: 2,
-      title: "Dummy 3",
-      description: "Surely a dummy",
-      boardId: 2,
+      order: 4,
+      title: "Cleaning up",
+      description:
+        "Honestly, all of these cards I've added are pretty useless after " +
+        "you've read them. So why not just delete them completely? Just press " +
+        "on triple dots in the top right corner of this card, to see the option" +
+        "to delete those pesky cards",
+      boardId: 1,
     },
-    {
-      id: 6,
-      order: 3,
-      title: "Dummy 4",
-      description: "Surely a dummy",
-      boardId: 2,
-    },
-  ].map<[number, Card]>((_) => [_.id, _])
+  ].map<[number, Card]>(_ => [_.id, _])
 );
 
 export const initialBoards: Board[] = [
