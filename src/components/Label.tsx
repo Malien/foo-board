@@ -12,10 +12,8 @@ export default function Label({ label, children, className, invalid }: Props) {
   return (
     <label
       className={classNames(
-        {
-          "before:border-rose-600 before:opacity-70": invalid,
-          "before:opacity-30": !invalid,
-        },
+        invalid && "before:border-rose-600 before:opacity-70",
+        !invalid && "before:opacity-30",
         "relative my-4 flex before:border-2 before:border-emerald-800",
         "before:rounded-lg before:absolute before:inset-0",
         "before:pointer-events-none before:duration-200",
