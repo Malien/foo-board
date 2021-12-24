@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Map } from "immutable";
 import { Board, Card } from "../board";
 import Boards from "./Boards";
 import Header from "./Header";
 import { Reordering, reorderInMemory } from "../reorder";
-import AddItemModal, { CardTemplate } from "./AddItemModal";
+import AddItemModal, { CardTemplate } from "./AddItemModal/AddItemModal";
 
 interface Props {
   initialCards: Card[];
