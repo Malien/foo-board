@@ -1,3 +1,5 @@
+import Icon from "./Icon";
+
 interface Props {
   onNewItem?: () => void;
 }
@@ -12,7 +14,8 @@ export default function Header({ onNewItem }: Props) {
         FooBoard
         <button
           className="appearance-none border-none py-1 px-6 relative m-0 
-            bg-white font-medium text-xl rounded-md cursor-pointer 
+            bg-white font-medium text-xl rounded-md cursor-pointer flex 
+            items-center pr-8
             after:absolute after:inset-0 after:opacity-0 after:rounded-md 
             after:transition-opacity after:ease-in after:duration-100
             before:absolute before:inset-0 before:opacity-0 before:rounded-md 
@@ -22,6 +25,7 @@ export default function Header({ onNewItem }: Props) {
             active:after:opacity-100 active:before:opacity-25"
           onClick={onNewItem}
         >
+          <Icon kind="add" className="text-2xl mr-1 [line-height:1]" />
           Add new item
         </button>
       </div>

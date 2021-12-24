@@ -2,7 +2,7 @@
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./components/App";
-import { reorder, retrieveData } from "./persistance";
+import * as persistance from "./persistance";
 
 // React beautiful DnD breaks on React 18 concurrent rendering mode with strict
 // mode enabled (which now includes strict effects constraint). React beautiful
@@ -11,11 +11,11 @@ import { reorder, retrieveData } from "./persistance";
 // https://github.com/atlassian/react-beautiful-dnd/issues/2350
 
 (async () => {
-  const { boards, cards } = await retrieveData();
+  const { boards, cards } = await persistance.retrieveData();
 
   ReactDOM.createRoot(document.getElementById("root")!).render(
     //<React.StrictMode>
-    <App boards={boards} initialCards={cards} persistReorder={reorder} />
+    <App boards={boards} initialCards={cards} persistance={persistance} />
     //</React.StrictMode>
   );
 })();

@@ -28,7 +28,9 @@ export default function Card({ card }: Props) {
           }}
         >
           <div className="px-2 py-1 text-white font-semibold">{card.title}</div>
-          <div className="bg-white px-2 py-1">{card.description}</div>
+          {card.description && (
+            <div className="bg-white px-2 py-1">{card.description}</div>
+          )}
         </div>
       )}
     </Draggable>

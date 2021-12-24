@@ -37,8 +37,8 @@ const dbPromise = openDB<Schema>("tasks", 1, {
       }
     );
 
-    initialBoards.map((board) => boardsStore.put(board));
-    initialCards.map((card) => cardsStore.put({ ...card, toBePatched: 0 }));
+    initialBoards.map(board => boardsStore.put(board));
+    initialCards.map(card => cardsStore.put({ ...card, toBePatched: 0 }));
   },
 });
 
@@ -113,4 +113,9 @@ export async function reorder({ cardId, destination, source }: Reordering) {
   }
 
   await tx.done;
+}
+
+export async function addCard(card: Card) {
+  const db = await dbPromise;
+  await db.put("cards", { ...card, toBePatched: 0 });
 }
