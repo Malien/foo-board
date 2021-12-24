@@ -1,14 +1,25 @@
 import classNames from "classnames";
 import { Droppable } from "react-beautiful-dnd";
 import { Board as BoardType, Card as CardType } from "../board";
-import Card from "./Card";
+import Card from "./Card/Card";
 
 interface Props {
   board: BoardType;
   cards: CardType[];
+  leftBoard?: BoardType;
+  rightBoard?: BoardType;
+  onDelete?: (cardId: number) => void;
+  onMove?: (card: CardType, toBoard: number) => void;
 }
 
-export default function Board({ board, cards }: Props) {
+export default function Board({
+  board,
+  cards,
+  leftBoard,
+  rightBoard,
+  onDelete,
+  onMove,
+}: Props) {
   return (
     <div className="rounded-md bg-slate-300 flex flex-col">
       <div className="mx-2 my-1 font-medium">{board.name}</div>
@@ -23,7 +34,14 @@ export default function Board({ board, cards }: Props) {
             ref={provided.innerRef}
           >
             {cards.map(card => (
-              <Card key={String(card.id)} card={card} />
+              <Card
+                key={String(card.id)}
+                card={card}
+                leftBoard={leftBoard}
+                rightBoard={rightBoard}
+                onDelete={onDelete && (() => onDelete(card.id))}
+                onMove={onMove && (toBoard => onMove(card, toBoard))}
+              />
             ))}
             {provided.placeholder}
           </div>

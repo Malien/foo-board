@@ -58,8 +58,9 @@ export default function AddItemModal({
       }}
       className={{
         base:
-          "absolute max-w-lg w-full left-[50%] top-[50%] translate-x-[-50%] " +
-          "translate-y-[-50%] bg-white shadow-xl rounded-xl",
+          "absolute max-w-lg w-full left-[50%] top-[50%] translate-y-[-50%] " +
+          "translate-x-[calc(-50%_-_1rem)] bg-white shadow-xl rounded-xl m-4 " +
+          "w-[calc(100%_-_2rem)]",
         afterOpen: "",
         beforeClose: "",
       }}

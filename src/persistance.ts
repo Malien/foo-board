@@ -119,3 +119,8 @@ export async function addCard(card: Card) {
   const db = await dbPromise;
   await db.put("cards", { ...card, toBePatched: 0 });
 }
+
+export async function removeCard(cardId: number) {
+  const db = await dbPromise;
+  await db.delete("cards", cardId);
+}

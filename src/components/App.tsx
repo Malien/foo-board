@@ -12,7 +12,8 @@ interface Props {
   persistance?: {
     reorder?: (reordering: Reordering) => void;
     addCard?: (newCard: Card) => void;
-  }
+    removeCard?: (cardId: number) => void;
+  };
 }
 
 function App({ initialCards, boards, persistance = {} }: Props) {
@@ -34,17 +35,36 @@ function App({ initialCards, boards, persistance = {} }: Props) {
         .filter(_ => _.boardId === boardId)
         .map(_ => _.boardId)
         .max() || -1) + 1;
-    const newCard = { id, order, title, description, boardId }
-    persistance.addCard?.(newCard)
+    const newCard = { id, order, title, description, boardId };
+    persistance.addCard?.(newCard);
     setCards(cards.set(id, newCard));
-    setModalShown(false)
+    setModalShown(false);
+  };
+
+  const handleMove = (card: Card, toBoard: number) => {
+    handleReordering({
+      cardId: card.id,
+      destination: { boardId: toBoard, order: 0 },
+      source: { boardId: card.boardId, order: card.order },
+    });
+  };
+
+  const handleDelete = (cardId: number) => {
+    setCards(cards => cards.remove(cardId));
+    persistance.removeCard?.(cardId);
   };
 
   return (
     <div className="text-emerald-800 min-h-screen">
       <Header onNewItem={() => setModalShown(true)} />
       <main className="max-w-screen-xl m-auto overflow-x-auto">
-        <Boards boards={boards} cards={cards} onReorder={handleReordering} />
+        <Boards
+          boards={boards}
+          cards={cards}
+          onReorder={handleReordering}
+          onMove={handleMove}
+          onDelete={handleDelete}
+        />
       </main>
       {modalShown && (
         <AddItemModal

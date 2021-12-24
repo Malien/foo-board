@@ -1,12 +1,23 @@
 import { Draggable } from "react-beautiful-dnd";
 import classNames from "classnames";
-import { Card as CardType } from "../board";
+import { Board, Card as CardType } from "../../board";
+import CardDropdown from "./CardDropdown";
 
 interface Props {
   card: CardType;
+  leftBoard?: Board;
+  rightBoard?: Board;
+  onDelete?: () => void;
+  onMove?: (toBoard: number) => void;
 }
 
-export default function Card({ card }: Props) {
+export default function Card({
+  card,
+  leftBoard,
+  rightBoard,
+  onDelete,
+  onMove,
+}: Props) {
   return (
     <Draggable draggableId={String(card.id)} index={card.order}>
       {(provided, snapshot) => (
@@ -27,7 +38,18 @@ export default function Card({ card }: Props) {
             ),
           }}
         >
-          <div className="px-2 py-1 text-white font-semibold">{card.title}</div>
+          <div
+            className="px-2 py-1 text-white font-semibold flex 
+              justify-between items-center"
+          >
+            {card.title}
+            <CardDropdown
+              leftBoard={leftBoard}
+              rightBoard={rightBoard}
+              onDelete={onDelete}
+              onMove={onMove}
+            />
+          </div>
           {card.description && (
             <div className="bg-white px-2 py-1">{card.description}</div>
           )}

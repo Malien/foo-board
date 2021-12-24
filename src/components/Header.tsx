@@ -6,7 +6,7 @@ interface Props {
 
 export default function Header({ onNewItem }: Props) {
   return (
-    <header className="bg-emerald-300">
+    <header className="bg-emerald-300 sticky top-0 left-0 right-0">
       <div
         className="m-auto max-w-screen-xl py-2 px-6 flex justify-between 
           text-2xl font-semibold items-center"
